@@ -83,8 +83,24 @@ print('-'*20)
 file_tree = calc_folder_sizes(file_tree)
 print_nested_dict(file_tree)
 
+# double counting is ok
 flat_file_tree = flatten_file_tree(file_tree)
 l = list(filter(lambda f: f['size'] <= 100000 and f['type'] == 'folder', flat_file_tree))
 print(sum(map(lambda x: x['size'], l)))
-l = list(filter(lambda f: f['size'] >= 8381165 and f['type'] == 'folder', flat_file_tree))
+
+# double counting is not ok
+print('-'*20)
+disk_space = 7e7
+used_storage = file_tree['/']['__size__']
+available = disk_space - used_storage
+required = 3e7
+print('disk_space  :', int(disk_space))
+print('used_storage:', int(used_storage))
+print('required    :', int(required))
+print('available   :', int(available))
+print('difference  :', int(required - available))
+l = list(filter(lambda f: f['size'] >= required - available and f['type'] == 'folder', flat_file_tree))
 print(min(map(lambda x: x['size'], l)))
+print('-'*20)
+for li in l:
+    print(li)
